@@ -1,0 +1,21 @@
+{
+    "name": "panos/tapit-test",
+    "description": "TapIT – Audition Task for PHP Developer",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Panajotis Zamos",
+            "email": "panos@holisticagency.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "TapItTest\\": "src/",
+            "TapItTest\\Models\\": "src/models/"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^7"
+    }
+}

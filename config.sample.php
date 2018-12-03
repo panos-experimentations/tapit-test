@@ -9,4 +9,7 @@ return [
     'DB_NAME' => 'SET_DB_NAME_FOR_THE_APP',
     'DB_USERNAME' => 'SET_DB_USERNAME',
     'DB_PASSWORD' => 'SET_DB_PASSWORD',
+    // tcp server
+    'SERVER_IP' => '127.0.0.1',
+    'SERVER_PORT' => '10000'
 ];

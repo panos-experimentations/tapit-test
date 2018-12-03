@@ -17,7 +17,7 @@ class Db
      * @param string $host
      * @throws \Exception
      */
-    public function __construct($username, $password, $db_name, $host = '127.0.0.1', $db_driver = 'pgsql')
+    public function __construct($username, $password, $db_name, $db_driver = 'pgsql', $host = '127.0.0.1')
     {
         $dsn = "{$db_driver}:dbname={$db_name};host={$host}";
 

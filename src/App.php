@@ -24,13 +24,15 @@ class App
         self::$container['SERVER_REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
         self::$container['SERVER_REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? '';
 
-        // init db
-        self::$container['db'] = new Db(
-            self::$container['config']['DB_USERNAME'],
-            self::$container['config']['DB_PASSWORD'],
-            self::$container['config']['DB_NAME'],
-            self::$container['config']['DB_DRIVER']
-        );
+        if (!empty($config)) {
+            // init db
+            self::$container['db'] = new Db(
+                self::$container['config']['DB_USERNAME'],
+                self::$container['config']['DB_PASSWORD'],
+                self::$container['config']['DB_NAME'],
+                self::$container['config']['DB_DRIVER']
+            );
+        }
     }
 
     /**
@@ -71,19 +73,49 @@ class App
 
     public function runServer(): void
     {
+        /* Allow the script to hang around waiting for connections. */
+        set_time_limit(0);
 
-        echo "\nall ok\n";
-        // @TODO run feed loop
-//        do {
-//
-//            // server stuff
-//            // read TCP feed
-//
-//            echo "TODO: implement TCP feed server\n";
-//            sleep(5);
-//
-//        } while (true);
+        /* Turn on implicit output flushing so we see what we're getting
+         * as it comes in. */
+        ob_implicit_flush();
 
+        $address = self::$container['config']['SERVER_IP'];
+        $port = self::$container['config']['SERVER_PORT'];
+
+        if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {
+            echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
+        }
+
+        if (socket_bind($sock, $address, $port) === false) {
+            echo "socket_bind() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+        }
+
+        if (socket_listen($sock, 5) === false) {
+            echo "socket_listen() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+        }
+
+        do {
+            if (($msgsock = socket_accept($sock)) === false) {
+                echo "socket_accept() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+                break;
+            }
+
+            if (false === ($buf = socket_read($msgsock, 2048, PHP_NORMAL_READ))) {
+                echo "socket_read() failed: reason: " . socket_strerror(socket_last_error($msgsock)) . "\n";
+                break;
+            }
+
+            // this will save location or set device name
+            Service::payload($buf);
+
+            //$talkback = "ok\n";
+            //socket_write($msgsock, $talkback, strlen($talkback));
+            //echo "$buf\n";
+            socket_close($msgsock);
+        } while (true);
+
+        socket_close($sock);
     }
 
 }

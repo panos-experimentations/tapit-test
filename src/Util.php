@@ -116,4 +116,33 @@ class Util
         exit;
     }
 
+    public static function parseTcpDataPackage($dataPackage)
+    {
+        $parts = explode('#', $dataPackage);
+        // it would be better if there was some specification of the data package format or more examples
+        $id = $parts[1];
+
+        // for GPRMC
+        $gprmc_sentence = '';
+        $start = strpos($dataPackage, '$GPRMC');
+        if ($start !== false) {
+            $length = strpos($dataPackage, '#', $start) - $start;
+            $gprmc_sentence = trim(substr($dataPackage, $start, $length), '#');
+        }
+
+        // for device NAME
+        $device_name = '';
+        $start = strpos($dataPackage, '$NAME');
+        if ($start !== false) {
+            $length = strpos($dataPackage, '#', $start) - $start;
+            $_name = trim(substr($dataPackage, $start, $length), '#');
+            $nameParts = explode(',', $_name);
+            if (isset($nameParts[1])) {
+                $device_name = $nameParts[1];
+            }
+        }
+
+        return [$id, $gprmc_sentence, $device_name];
+    }
+
 }

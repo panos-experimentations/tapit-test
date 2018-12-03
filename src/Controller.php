@@ -22,8 +22,6 @@ class Controller
 
     function foo()
     {
-        $d = new Device();
-        $d->create('foo');
         return ['test', ['msg' => 'data FOO', 'values' => ['a', 'b']]];
     }
 

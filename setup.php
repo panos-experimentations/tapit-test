@@ -57,8 +57,17 @@ function setup(\TapItTest\App $app)
 
     $sqls[] = <<<SQL
     create table devices (
-      id serial primary key,
+      id varchar(255) primary key,
       name varchar(255)
+    );
+SQL;
+
+    $sqls[] = <<<SQL
+    create table locations (
+      id serial primary key,
+      device_id varchar(255) references devices(id),
+      LatLong varchar(255),
+      created_at timestamp
     );
 SQL;
 
